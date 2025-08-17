@@ -6,3 +6,4 @@ eventEmitter.on("error", (err) => {
 });
 
 eventEmitter.emit("error", new Error("Something went wrong"));
+
