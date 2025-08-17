@@ -8,7 +8,8 @@ console.log(divyansh)
 
 const text = "oke oke babe less goo";
 
-const fs = require("fs").promises;
+const fs = require("node:fs").promises;
+
 
 async function main() {
   try {
