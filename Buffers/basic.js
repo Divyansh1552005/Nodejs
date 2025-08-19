@@ -11,7 +11,7 @@ console.log("C:", str.charCodeAt(2)); // 67
 
 // But we CANNOT directly store binary values like 01000001 (for 'A')
 // JavaScript will treat 01000001 as a normal number (in decimal = 1000001)
-let binaryA = 01000001; 
+// let binaryA = 01000001; 
 console.log("binaryA interpreted as decimal:", binaryA); // 1000001
 
 // So JS alone cannot properly store raw binary data like files or network packets.
