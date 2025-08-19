@@ -7,7 +7,9 @@ const server = http.createServer((req, res) => {
     console.log(`Method is ${req.method}`)
 
   res.writeHead(200);
-  res.end("Hello from server!");
+  res.write("Hello from server!");
+  res.end();
+  
 });
 
 // Start server on port 3000
