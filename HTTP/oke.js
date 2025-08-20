@@ -6,6 +6,8 @@ const server = http.createServer(function (req, res) {
 
 
   switch (req.url) {
+
+
     case '/':
       res.writeHead(200);
       return res.end(`Homepage`);
@@ -17,6 +19,11 @@ const server = http.createServer(function (req, res) {
     case '/about':
       res.writeHead(200);
       return res.end('I am a software engineer');
+
+    case '/projects':
+      res.writeHead(200);
+      return res.end('Here are my projects');
+
     default:
       res.writeHead(404);
       return res.end("You're lost");
