@@ -1,0 +1,16 @@
+Request came at 21/8/2025, 11:11:26 pm
+Request came at 21/8/2025, 11:11:33 pm
+Request came at 21/8/2025, 11:11:46 pm
+Request came at 21/8/2025, 11:11:50 pm
+Request: GET | Route: / | Time: 21/8/2025, 11:13:00 pm
+Request: GET | Route: /contact-us | Time: 21/8/2025, 11:13:15 pm
+Request: GET | Route: /tweet | Time: 21/8/2025, 11:13:21 pm
+Request: POST | Route: /tweet | Time: 21/8/2025, 11:13:39 pm
+Request: POST | Route: / | Time: 21/8/2025, 11:17:26 pm
+Request: POST | Route: / | Time: 21/8/2025, 11:17:28 pm
+Request: GET | Route: / | Time: 21/8/2025, 11:17:31 pm
+Request: GET | Route: /tweet | Time: 21/8/2025, 11:17:36 pm
+Request: GET | Route: /contact-us | Time: 21/8/2025, 11:17:48 pm
+Request: PUT | Route: /contact-us | Time: 21/8/2025, 11:17:52 pm
+Request: POST | Route: /contact-us | Time: 21/8/2025, 11:17:57 pm
+Request: POST | Route: /tweet | Time: 21/8/2025, 11:18:04 pm
