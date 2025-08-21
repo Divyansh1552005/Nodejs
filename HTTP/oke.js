@@ -20,6 +20,10 @@ const server = http.createServer(function (req, res) {
       res.writeHead(200);
       return res.end('I am a software engineer');
 
+    case '/skills':
+      res.writeHead(200);
+      return res.end('My skills include JavaScript, Node.js, and more.');
+
     case '/projects':
       res.writeHead(200);
       return res.end('Here are my projects');
