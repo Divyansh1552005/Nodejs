@@ -25,8 +25,15 @@ const manga = [
         title: "Attack on Titan",
         author: "Hajime Isayama",
         year: 2009
+    },
+    {
+        id: 4,
+        title: "My Hero Academia",
+        author: "Kohei Horikoshi",
+        year: 2014
     }
 ]
+
 
 
 // Routes
