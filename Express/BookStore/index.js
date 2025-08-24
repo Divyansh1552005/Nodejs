@@ -31,6 +31,12 @@ const manga = [
         title: "My Hero Academia",
         author: "Kohei Horikoshi",
         year: 2014
+    },
+    {
+        id:5,
+        title: "Dr stone",
+        author : "idfk",
+        year : 2006
     }
 ]
 
