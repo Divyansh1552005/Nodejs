@@ -21,7 +21,7 @@ app.use((req, res, next) => {
 
 
 // routes
-app.use('/books',bookRouter)sudo docker run hello-world
+app.use('/books',bookRouter)
 
 
 app.listen(port, ()=>{
