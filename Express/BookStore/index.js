@@ -1,10 +1,9 @@
-
+import 'dotenv/config';
 import express from "express";
  
 const app = express()
 const port = 3000
 import bookRouter from "./routes/book.routes.js";
-
 import {loggermiddleware} from "./middlewares/logger.js";
 
 // middlewares (plugins)
