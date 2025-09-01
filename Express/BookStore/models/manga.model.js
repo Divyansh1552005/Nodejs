@@ -6,3 +6,5 @@ const booksTable = pgTable("books", {
     author: varchar("author", { length: 255 }).notNull(),
     year: integer("year").notNull()
 });
+
+// will start from tommowrows
