@@ -1,10 +1,16 @@
-import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import {pgTable, varchar, uuid, text } from "drizzle-orm/pg-core";
+import { authorTable } from "./author.model.js";
 
 const booksTable = pgTable("books", {
-    id: integer("id").primaryKey().notNull(),
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
     title: varchar("title", { length: 255 }).notNull(),
-    author: varchar("author", { length: 255 }).notNull(),
-    year: integer("year").notNull()
+    description : text("description"),
+    authorId: uuid("author_id").references(()=>{
+        return authorTable.id
+    }),
+    
 });
+
+export { booksTable };
 
 // will start from tommowrows

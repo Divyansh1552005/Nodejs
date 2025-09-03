@@ -1,78 +1,106 @@
 
-import { manga } from "../models/manga.js";
+import { booksTable, authorTable } from "../models/index.js";
+import { db } from '../db/index.js';
+import { eq } from 'drizzle-orm';
 
-export const getAllBooks = function(req, res){
-    res.setHeader("Content-Type", "application/json")
-    res.json(manga)
-}
-
-export const getBookById = function(req, res){
-    const id = req.params.id;
-
-    if(isNaN(id)){
-        res.status(400);
-        return res.send("Please enter a valid number");
-    }
-
-    const required_manga = manga.find(m => m.id === parseInt(id));
-
-
-    if(required_manga){
-        // res.setHeader("Content-Type", "application/json")
-        res.json(required_manga)
-    }
-    else{
-        res.status(404).send("Manga not found")
+export const getAllBooks = async function(req, res) {
+    try {
+        res.setHeader("Content-Type", "application/json");
+        const books = await db.select().from(booksTable);
+        res.json(books);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch books" });
     }
 }
 
-export const createBook = function(req, res) {
-    const { title, author, year } = req.body;
-    if(title && author && year) {
-        const maxId = manga.length > 0 ? Math.max(...manga.map(m => m.id)) : 0;
-        const newManga = { id: maxId + 1, title, author, year };
-        manga.push(newManga);
-        res.status(201).json(newManga);
-    } 
-    else {
-        res.status(400).send("Please provide title, author, and year");
+export const getBookById = async function(req, res) {
+    try {
+        const id = req.params.id;
+
+        if (!id) {
+            return res.status(400).send("Please provide a valid ID");
+        }
+
+        const book = await db.select().from(booksTable).where(eq(booksTable.id, id));
+
+        if (book.length > 0) {
+            res.json(book[0]);
+        } else {
+            res.status(404).send("Book not found");
+        }
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch book" });
     }
 }
 
-export const deleteBook = function(req, res) {
-    const id = req.params.id;
-    if (isNaN(id)) {
-        res.status(400);
-        return res.send("Please enter a valid number");
-    }
-    const index = manga.findIndex(m => m.id === parseInt(id));
-    if (index !== -1) {
-        const deletedManga = manga[index];
-        manga.splice(index, 1);
-        res.status(200).send(`Manga with ID ${id} and Title "${deletedManga.title}" deleted`);
-    } 
-    else {
-        res.status(404).send("Manga not found");
+export const createBook = async function(req, res) {
+    try {
+        const { title, description, authorId } = req.body;
+        if (title) {
+            const bookData = { title };
+            if (description) bookData.description = description;
+            if (authorId) bookData.authorId = authorId;
+            
+            const newBook = await db.insert(booksTable).values(bookData).returning();
+            
+            res.status(201).json(newBook[0]);
+        } else {
+            res.status(400).send("Please provide title");
+        }
+    } catch (error) {
+        console.error("Create book error:", error);
+        res.status(500).json({ error: "Failed to create book", details: error.message });
     }
 }
 
-export const updateBook = function(req, res) {
-    const id = req.params.id;
-    if (isNaN(id)) {
-        res.status(400);
-        return res.send("Please enter a valid number");
-    }
-    
-    const index = manga.findIndex(m => m.id === parseInt(id));
-    if (index !== -1) {
-        const { title, author, year } = req.body;
-        if (title) manga[index].title = title;
-        if (author) manga[index].author = author;
-        if (year) manga[index].year = year;
+export const deleteBook = async function(req, res) {
+    try {
+        const id = req.params.id;
+        if (!id) {
+            return res.status(400).send("Please provide a valid ID");
+        }
+
+        const deletedBook = await db.delete(booksTable).where(eq(booksTable.id, id)).returning();
         
-        res.status(200).json(manga[index]);
-    } 
-    else {
-        res.status(404).send("Manga not found");
+        if (deletedBook.length > 0) {
+            res.status(200).json({ message: `Book with ID ${id} and Title "${deletedBook[0].title}" deleted` });
+        } else {
+            res.status(404).send("Book not found");
+        }
+    } catch (error) {
+        res.status(500).json({ error: "Failed to delete book" });
+    }
+}
+
+export const updateBook = async function(req, res) {
+    try {
+        const id = req.params.id;
+        if (!id) {
+            return res.status(400).send("Please provide a valid ID");
+        }
+        
+        const { title, description, authorId } = req.body;
+        const updateData = {};
+        
+        if (title) updateData.title = title;
+        if (description) updateData.description = description;
+        if (authorId) updateData.authorId = authorId;
+        
+        if (Object.keys(updateData).length === 0) {
+            return res.status(400).send("Please provide at least one field to update");
+        }
+        
+        const updatedBook = await db.update(booksTable)
+            .set(updateData)
+            .where(eq(booksTable.id, id))
+            .returning();
+        
+        if (updatedBook.length > 0) {
+            res.status(200).json(updatedBook[0]);
+        } else {
+            res.status(404).send("Book not found");
+        }
+    } catch (error) {
+        res.status(500).json({ error: "Failed to update book" });
     }
 }
