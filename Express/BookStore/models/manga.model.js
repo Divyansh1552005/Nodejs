@@ -1,4 +1,5 @@
-import {pgTable, varchar, uuid, text } from "drizzle-orm/pg-core";
+import {pgTable, varchar, uuid, text, index } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { authorTable } from "./author.model.js";
 
 const booksTable = pgTable("books", {
@@ -9,8 +10,12 @@ const booksTable = pgTable("books", {
         return authorTable.id
     }),
     
+}, (table)=>{
+    return {
+        titleIndex: index("title_index").using("btree", sql`to_tsvector('english', ${table.title})`)
+    };
 });
 
 export { booksTable };
 
-// will start from tommowrows
+// will start from tommorrows

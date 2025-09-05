@@ -1,9 +1,18 @@
 
 import { booksTable, authorTable } from "../models/index.js";
 import { db } from '../db/index.js';
-import { eq } from 'drizzle-orm';
+import { eq,ilike } from 'drizzle-orm'; // Import the eq function for equality checks
+// ilike is for case insensitive search
+import { sql } from "drizzle-orm";
 
 export const getAllBooks = async function(req, res) {
+    const search = req.query.search;
+    if(search){
+        const books = await db.select().from(booksTable).where(
+            sql`to_tsvector('english', ${booksTable.title}) @@ to_tsquery('english', ${search})`
+        );
+        return res.json(books);
+    }
     try {
         res.setHeader("Content-Type", "application/json");
         const books = await db.select().from(booksTable);
@@ -20,8 +29,8 @@ export const getBookById = async function(req, res) {
         if (!id) {
             return res.status(400).send("Please provide a valid ID");
         }
-
-        const book = await db.select().from(booksTable).where(eq(booksTable.id, id));
+        // eq means equals
+        const book = await db.select().from(booksTable).where(eq(booksTable.id, id)).limit(1);
 
         if (book.length > 0) {
             res.json(book[0]);
@@ -41,7 +50,11 @@ export const createBook = async function(req, res) {
             if (description) bookData.description = description;
             if (authorId) bookData.authorId = authorId;
             
-            const newBook = await db.insert(booksTable).values(bookData).returning();
+            const newBook = await db.insert(booksTable).values(bookData).returning(
+                {
+                    id: booksTable.id
+                }
+            );
             
             res.status(201).json(newBook[0]);
         } else {
