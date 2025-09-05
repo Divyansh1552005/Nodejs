@@ -30,7 +30,7 @@ export const getBookById = async function(req, res) {
             return res.status(400).send("Please provide a valid ID");
         }
         // eq means equals
-        const book = await db.select().from(booksTable).where(eq(booksTable.id, id)).limit(1);
+        const book = await db.select().from(booksTable).where(eq(booksTable.id, id)).limit(1).leftJoin(authorTable, eq(booksTable.authorId, authorTable.id))
 
         if (book.length > 0) {
             res.json(book[0]);
