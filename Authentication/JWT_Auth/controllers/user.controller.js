@@ -90,6 +90,7 @@ const userLogin = async function (req,res){
         const user = users[0];
         const user_hashed_password = user.password;
         const user_salt = user.salt;
+        const role = user.role;
 
         // now let us create hashed password with the password given by the user
         const user_given_password = createHmac('sha256', user_salt).update(password).digest('hex');
@@ -105,13 +106,14 @@ const userLogin = async function (req,res){
         const payload = {
             id : user.id,
             name : user.name,
-            email : user.email
+            email : user.email,
+            role : role
         }
 
         // we are signing the token with a secret key
         // this key should be kept secret and secure
         // ideally it should be stored in environment variables
-        const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn : '1m'});
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn : '1h'});
 
     
         
@@ -125,6 +127,35 @@ const userLogin = async function (req,res){
     }
 }
 
+
+const updateName = async (req,res) =>{
+    // ab agar iske baad hame dekhna ho active user then we can create a middleware coz we dont wanna repeat the code of /test
+    // the middleware will fetch the session and forward it to the route
+    // this middleware will do db operation
+
+    const user = req.user;
+
+    if(!user){
+        return res.status(401).json({
+            error : "you are not logged in"
+        })
+    }
+
+    const { name } = req.body;
+    
+    if (!name) {
+            return res.status(400).json({
+                error: "Name is required"
+            });
+    }
+    await db.update(usersTable).set({name})
+    .where(eq(usersTable.id, user.id))
+
+
+    return res.status(201).json({status : 'success'});
+
+}
+
 // Todo - token expiration par logout , session cleanup etc - see from claude if you cannot do it
 
-export {userLogin, userSignup, getAllUsers} ;
+export {userLogin, userSignup, getAllUsers, updateName} ;
