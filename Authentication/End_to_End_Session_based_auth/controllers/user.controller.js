@@ -4,6 +4,9 @@ import { usersTable, sessionsTable } from "../db/schema.js";
 import { createHmac, randomBytes} from "node:crypto";
 import { eq } from "drizzle-orm";
 
+const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes for testing
+
+
 const getAllUsers = async function (req,res){
     try {
         // Get all users (excluding password and salt for security)
@@ -96,19 +99,25 @@ const userLogin = async function (req,res){
             })
         }
 
-         const [session] = await db.insert(sessionsTable).values({
-            userId: user.id
+       const now = new Date();
+        const expiresAt = new Date(now.getTime() + SESSION_DURATION);
+        
+        // Create session with expiration
+        const [session] = await db.insert(sessionsTable).values({
+            userId: user.id,
+            expiresAt: expiresAt,
+            lastAccessedAt: now
         }).returning();
-
-        // If password matches, login successful
-        return res.json({ 
+        
+        return res.json({
             message: 'Login successful!',
             user: {
                 id: user.id,
                 name: user.name,
                 email: user.email
             },
-            sessionId : session.id
+            sessionId: session.id,
+            expiresAt: expiresAt.toISOString()
         });
 
     } catch (error) {
@@ -116,5 +125,7 @@ const userLogin = async function (req,res){
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+// Todo - token expiration par logout , session cleanup etc - see from claude if you cannot do it
 
 export {userLogin, userSignup, getAllUsers} ;
