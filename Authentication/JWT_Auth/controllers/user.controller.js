@@ -3,6 +3,7 @@ import db from "../db/index.js";
 import { usersTable, sessionsTable } from "../db/schema.js";
 import { createHmac, randomBytes} from "node:crypto";
 import { eq } from "drizzle-orm";
+import jwt from "jsonwebtoken";
 
 const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes for testing
 
@@ -99,27 +100,25 @@ const userLogin = async function (req,res){
             })
         }
 
-       const now = new Date();
-        const expiresAt = new Date(now.getTime() + SESSION_DURATION);
-        
-        // Create session with expiration
-        const [session] = await db.insert(sessionsTable).values({
-            userId: user.id,
-            expiresAt: expiresAt,
-            lastAccessedAt: now
-        }).returning();
+        // information we wanna store in the token
+
+        const payload = {
+            id : user.id,
+            name : user.name,
+            email : user.email
+        }
+
+        // we are signing the token with a secret key
+        // this key should be kept secret and secure
+        // ideally it should be stored in environment variables
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn : '1m'});
+
+    
         
         return res.json({
             message: 'Login successful!',
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email
-            },
-            sessionId: session.id,
-            expiresAt: expiresAt.toISOString()
+            token
         });
-
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Internal server error' });

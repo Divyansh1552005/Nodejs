@@ -3,6 +3,7 @@ import userRouter from './routes/user.routes.js'
 import { sessionsTable, usersTable } from './db/schema.js';
 import { eq } from 'drizzle-orm';
 import db from './db/index.js';
+import jwt from "jsonwebtoken"
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -11,27 +12,34 @@ const PORT = process.env.PORT ?? 3000;
 app.use(express.json());
 
 app.use(async function (req,res,next){
+  try{
   // ye middleware har request k saath uski session id ie saari properties chipka dega
-  const sessionId = req.headers['session-id'];
+  const tokenHeader = req.headers['authorization'];
+  // header authorization : bearer <Token>
 
-  if(!sessionId) return next();
+  if(!tokenHeader) return next(); // if no token header that means user aint logged in
 
-   const [data] = await db.select({
-        sessionId: sessionsTable.id,
-        id : usersTable.id,
-        userId: sessionsTable.userId,  // Fixed typo: usedId -> userId
-        name: usersTable.name,
-        email: usersTable.email
+  // it should always start with Bearer
+  if(!tokenHeader.startsWith('Bearer')){
+    return res.status(400).json({
+      error : "Auth header must start with bearer"
     })
-    .from(sessionsTable)
-    .rightJoin(usersTable, eq(sessionsTable.userId, usersTable.id))  // Fixed JOIN syntax
-    .where(eq(sessionsTable.id, sessionId));  // Fixed WHERE clause
+  }
 
-    if(!data) return next();
+  // split the header so as to remove bearer to get token
+  const token = tokenHeader.split(' ')[1]
 
-    req.user = data;
+  // decode the token ie verify if sahi hai ya nahi token
+  const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
+
+
+    req.user = decoded;
     next();
+}catch{
+  next()
+};
+
 })
 
 app.get('/', (req,res) =>{
