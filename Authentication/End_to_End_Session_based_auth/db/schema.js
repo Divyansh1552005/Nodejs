@@ -6,8 +6,6 @@ export const usersTable = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   password : text("password").notNull(),
   salt : text("salt").notNull(),
-  
-
 });
 
 // Note: Don't make userId unique if you want to allow multiple sessions per user
