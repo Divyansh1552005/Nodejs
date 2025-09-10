@@ -5,8 +5,6 @@ import { createHmac, randomBytes} from "node:crypto";
 import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 
-const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes for testing
-
 
 const getAllUsers = async function (req,res){
     try {

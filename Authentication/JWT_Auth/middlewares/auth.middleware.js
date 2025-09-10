@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"
 
 export const authenticationmiddleware = async function(req,res,next){
     try {
-       // ye middleware har request k saath uski session id ie saari properties chipka dega
+       // ye middleware har request k saath uski authorization ie saari properties chipka dega
        const tokenHeader = req.headers["authorization"];
        // header authorization : bearer <Token>
    
@@ -19,6 +19,7 @@ export const authenticationmiddleware = async function(req,res,next){
        const token = tokenHeader.split(" ")[1];
    
        // decode the token ie verify if sahi hai ya nahi token
+       // decoded object will contain the JWT Payload ie user ki saari info
        const decoded = jwt.verify(token, process.env.JWT_SECRET);
    
        req.user = decoded;
@@ -33,7 +34,7 @@ export const authenticationmiddleware = async function(req,res,next){
 export const ensureAuthenticated = async function (req,res, next){
     if(!req.user){
         return res.status(401).json({
-            error : "You must be authenticated"
+            error : "You must be authenticated to access this resource!"
         })
     }
 

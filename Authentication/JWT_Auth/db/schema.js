@@ -10,8 +10,7 @@ export const usersTable = pgTable("users", {
   role : userRoleEnum().notNull().default('user'),
   password : text("password").notNull(),
   salt : text("salt").notNull(),
-  
-
+  // Optional: Add other user-related fields here
 });
 
 // Note: Don't make userId unique if you want to allow multiple sessions per user
