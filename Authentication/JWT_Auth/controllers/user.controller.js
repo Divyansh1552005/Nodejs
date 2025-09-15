@@ -112,8 +112,6 @@ const userLogin = async function (req,res){
         // this key should be kept secret and secure
         // ideally it should be stored in environment variables
         const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn : '1h'});
-
-    
         
         return res.json({
             message: 'Login successful!',

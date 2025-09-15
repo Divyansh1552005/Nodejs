@@ -14,7 +14,7 @@ router.use(adminRestrictMiddleware)
 
 
 router.get('/users', async (req,res) =>{
-    // first we need to check logged in hai ya nahi
+    // first we need to check logged in hai ya nahi jo ki ab upar ensureAthunteiccated kar raha hai
     const users = await db.select({
         id : usersTable.id,
         name : usersTable.name,
