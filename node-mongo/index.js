@@ -3,8 +3,11 @@ import { connectMongoDB } from './connection.js';
 import 'dotenv/config'
 import { authMiddleware } from './middlewares/auth.middleware.js';
 import UserRouter from "./routes/user.routes.js"
+
+
+
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT ?? 3000;
 
 connectMongoDB(process.env.MONGO_CONNECTION_URL).then(()=> console.log("Mongo DB Connected!!"));
 

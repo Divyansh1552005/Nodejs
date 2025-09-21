@@ -6,6 +6,13 @@ import { ensureAuthenticated } from '../middlewares/auth.middleware.js';
 const router = express.Router();
 
 
+router.get('/getAllusers', ensureAuthenticated, async function(req,res){
+    const users = await User.find();
+
+    return res.status(200).json({status : 'success' , data : users})
+})
+
+
 router.post('/Signup', async function(req,res){
     const {name, email, password} = req.body;
 
@@ -13,7 +20,7 @@ router.post('/Signup', async function(req,res){
     const existingUser = await User.findOne({
         email,
     });
-
+ 
     if(existingUser) return res.status(400).json({error : `User with email ${email} already exists!`})
 
     const salt = randomBytes(256).toString('hex')

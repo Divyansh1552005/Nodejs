@@ -20,7 +20,7 @@ const userSchema = new Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true } // will add createdAt and updatedAt fields automatically
 );
 
 
