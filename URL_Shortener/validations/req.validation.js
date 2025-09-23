@@ -10,7 +10,13 @@ export const signupPostRequestBodySchema = z.object({
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])/,
         "Password must contain uppercase, lowercase, number and special character"
     ),
-    
-
-
 })
+
+export const loginPostRequestBodySchema = z.object({
+    email : z.string().email("Invalid email address"),
+    password : z.string().min(6)
+    
+})
+
+
+
