@@ -25,5 +25,7 @@ export const shortenPostRequestBodySchema = z.object({
 })
 
 
-
-
+export const updatePatchRequestBodySchema = z.object({
+    url: z.string().url().optional(),
+    code: z.string().optional(),
+})

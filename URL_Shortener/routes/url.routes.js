@@ -1,5 +1,5 @@
 import express from "express";
-import { shortenPostRequestBodySchema } from "../validations/req.validation.js";
+import { shortenPostRequestBodySchema, updatePatchRequestBodySchema } from "../validations/req.validation.js";
 import db from "../db/index.js"
 import {urlTable, usersTable} from "../models/index.js"
 import {nanoid} from "nanoid"
@@ -91,6 +91,55 @@ router.delete("/:id", ensureAuthenticated, async function (req,res){
 
 
 // router patch request to update a url whether it is the target or shortcode
+router.patch("/update/:id", ensureAuthenticated, async function (req, res) {
+    const id = req.params.id;
+
+    const validationResult = await updatePatchRequestBodySchema.safeParseAsync(req.body);
+
+    if (validationResult.error) {
+        return res.status(400).json({
+            error: validationResult.error
+        });
+    }
+
+    const { url, code } = validationResult.data;
+
+    // build dynamic update object
+    const updateData = {};
+    if (url !== undefined) updateData.targetUrl = url;
+    if (code !== undefined) updateData.shortCode = code;
+
+    if (Object.keys(updateData).length === 0){
+        return res.status(400).json({
+            error: "No fields provided to update"
+        });
+    }
+
+    // move to service layer later
+    const updated = await db.update(urlTable)
+        .set(updateData)
+        .where(and(
+            eq(urlTable.id, id),
+            eq(urlTable.userId, req.user.id)
+        ))
+        .returning({
+            id: urlTable.id,
+            shortCode: urlTable.shortCode,
+            targetUrl: urlTable.targetUrl,
+            updatedAt: urlTable.updatedAt
+        });
+
+    if (!updated || updated.length === 0) {
+        return res.status(404).json({
+            error: "URL not found or you don't have permission to update it"
+        });
+    }
+
+    return res.status(200).json({
+        message: "URL updated successfully!",
+        updatedUrl: updated[0]
+    });
+});
 
 
 // done to redirect to the original url and ofc it should not be authenticated
