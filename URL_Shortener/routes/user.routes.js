@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.post("/signup", async (req, res) => {
     // const {firstname, lastname, email, password} = req.body;
-
+    // dont wanna update more bruhhh
     // // basic validation
     // if(!firstname || !lastname || !email || !password) {
     //     return res.status(400).json({message: "All fields are required"});
