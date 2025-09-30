@@ -47,6 +47,16 @@ COPY --from=builder /home/build/package*.json .
 
 RUN npm install --omit=dev
 
+# what the below 3 layers does is the application will not run as root user but as a non-root user named nodejs with uid and gid of 1001
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nodejs
+
+USER nodejs
+
+EXPOSE 3000
+ENV PORT=3000
+
+
 CMD ["npm", "start"]
 
 
