@@ -34,7 +34,7 @@ FROM node:20.17.0-alpine3.19
 
 WORKDIR /home/app
 
-
+RUN apk add --no-cache curl
 COPY package.json package.json
 COPY package-lock.json package-lock.json
 # or instead of above 2 we can also use wildcards - COPY package*.json ./
@@ -46,6 +46,7 @@ COPY index.js index.js
 COPY Dockerfile Dockerfile
 
 
-EXPOSE 3000-3009
+ENV PORT=8000
+EXPOSE 8000
 
 CMD ["npm", "start"]

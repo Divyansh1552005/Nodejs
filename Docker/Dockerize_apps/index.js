@@ -1,7 +1,7 @@
 import express from "express";
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
 
@@ -12,6 +12,10 @@ app.get("/", (req, res) => {
 
 app.get("/api/data", (req, res) => {
   res.json({ message: "This is some sample data from the API." });
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).send("Container is healthy!");
 });
 
 app.listen(PORT, () => {
