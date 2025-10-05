@@ -5,3 +5,4 @@ Authentication/End_to_End_Session_based_auth/.env
 Authentication/JWT_Auth/.env
 node-mongo/.env
 URL_Shortener/.gitignore
+MongoDB-Aggregation/.env
