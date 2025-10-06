@@ -6,3 +6,4 @@ Authentication/JWT_Auth/.env
 node-mongo/.env
 URL_Shortener/.gitignore
 MongoDB-Aggregation/.env
+deploy_app/.env
