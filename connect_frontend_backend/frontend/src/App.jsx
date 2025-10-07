@@ -8,7 +8,7 @@ function App() {
   const [jokes,setJokes] = useState([])
   // since hame application load hote hi data chayie so we will be using useEffect
   useEffect(()=>{
-    axios.get("http://localhost:3000/jokes")
+    axios.get("/api/jokes")
     .then((res)=>{
       // console.log(res.data)
       setJokes(res.data)
