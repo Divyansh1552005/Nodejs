@@ -1,6 +1,6 @@
 import express from "express";
 // import cors from "cors";
-
+import multer from "multer";
 
 const app = express();
 
@@ -49,6 +49,25 @@ app.get("/api/jokes", (req, res) => {
     
     res.json(jokes);
 })
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // folder to save files
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname); // unique name
+  }
+});
+
+
+const upload = multer({ storage: storage, 
+    limits : {fileSize : 1024 * 1024}   // 1 MB limit
+ });
+
+app.post('/api/upload', upload.single('file'), (req, res) => {
+  res.json({ message: 'File uploaded successfully', file: req.file });
+});
 
 
 app.listen(PORT, () => {
